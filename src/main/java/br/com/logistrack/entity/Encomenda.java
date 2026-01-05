@@ -31,6 +31,10 @@ public class Encomenda {
     String remetente;
     String destinatario;
     String localizacaoAtual;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+
     StatusEncomenda status;
     LocalDateTime dataPostagem;
     LocalDateTime dataEntrega;
@@ -39,10 +43,10 @@ public class Encomenda {
     public long getTempoEmTransito() {
         if (dataPostagem == null) return 0;
 
-        LocalDate dataFinal = LocalDate.now();
+        LocalDateTime dataFinal = LocalDateTime.now();
 
         if (this.dataEntrega != null) {
-            dataFinal = this.dataEntrega.toLocalDate();
+            dataFinal = this.dataEntrega.toLocalDate().atStartOfDay();
         }
 
         return ChronoUnit.DAYS.between(dataPostagem, dataFinal);

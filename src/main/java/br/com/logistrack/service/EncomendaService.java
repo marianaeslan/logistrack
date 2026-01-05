@@ -2,6 +2,7 @@ package br.com.logistrack.service;
 
 import br.com.logistrack.dto.encomenda.EncomendaInputDTO;
 import br.com.logistrack.dto.encomenda.RastreioResponseDTO;
+import br.com.logistrack.dto.encomenda.StatusUpdateDTO;
 import br.com.logistrack.entity.Encomenda;
 import br.com.logistrack.entity.StatusEncomenda;
 import br.com.logistrack.exceptions.RegraDeNegocioException;
@@ -28,19 +29,31 @@ public class EncomendaService {
         novaEncomenda.setDestinatario(encomendaInputDTO.getDestinatario());
         novaEncomenda.setCodigoRastreio(UUID.randomUUID().toString());
         novaEncomenda.setDataPostagem(LocalDateTime.now());
+        novaEncomenda.setDataPrevisaoEntrega(novaEncomenda.getDataPostagem().plusDays(5));
+        novaEncomenda.setLocalizacaoAtual("Centro de Distribuição");
         novaEncomenda.setStatus(StatusEncomenda.EM_PROCESSAMENTO);
         encomendaRepository.save(novaEncomenda);
-        return encomendaInputDTO;
+        return objectMapper.convertValue(novaEncomenda, EncomendaInputDTO.class);
     }
 
-    public EncomendaInputDTO update (long id, EncomendaInputDTO encomendaInputDTO) throws RegraDeNegocioException {
-        Encomenda encomenda = encomendaRepository.findById(id).orElseThrow (() -> new RegraDeNegocioException(
-                "Encomenda não encontrada"));
-        encomenda.setLocalizacaoAtual(encomenda.getLocalizacaoAtual());
-        encomenda.setStatus(encomenda.getStatus());
+    public StatusUpdateDTO update(long id, StatusUpdateDTO statusUpdateDTO) throws RegraDeNegocioException {
+        Encomenda encomenda = encomendaRepository.findById(id)
+                .orElseThrow(() -> new RegraDeNegocioException("Encomenda não encontrada"));
+
+        if (statusUpdateDTO.getNovaLocalizacao() != null) {
+            encomenda.setLocalizacaoAtual(statusUpdateDTO.getNovaLocalizacao());
+        }
+
+        if (statusUpdateDTO.getNovoStatus() != null) {
+            encomenda.setStatus(statusUpdateDTO.getNovoStatus());
+            if (statusUpdateDTO.getNovoStatus() == StatusEncomenda.ENTREGUE) {
+                encomenda.setDataEntrega(LocalDateTime.now());
+            }
+        }
         encomendaRepository.save(encomenda);
-        return encomendaInputDTO;
+        return objectMapper.convertValue(encomenda, StatusUpdateDTO.class);
     }
+
 
     public List<Encomenda> list() {
         return encomendaRepository.findAll().stream()
