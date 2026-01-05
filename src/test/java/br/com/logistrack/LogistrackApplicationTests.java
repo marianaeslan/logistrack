@@ -1,4 +1,4 @@
-package com.logistrack.logistrack;
+package br.com.logistrack;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
