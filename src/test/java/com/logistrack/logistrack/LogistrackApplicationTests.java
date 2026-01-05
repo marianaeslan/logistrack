@@ -1,0 +1,13 @@
+package com.logistrack.logistrack;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class LogistrackApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
