@@ -50,6 +50,9 @@ public class EncomendaService {
                 encomenda.setDataEntrega(LocalDateTime.now());
             }
         }
+        if (encomenda.isAtrasado()) {
+            encomenda.setStatus(StatusEncomenda.ATRASADO);
+        }
         encomendaRepository.save(encomenda);
         return objectMapper.convertValue(encomenda, StatusUpdateDTO.class);
     }

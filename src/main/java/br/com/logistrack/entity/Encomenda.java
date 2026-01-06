@@ -5,17 +5,9 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.time.temporal.ChronoUnit;
 
-// TODO -> Criar Classe encomenda com os seguintes atributos:
-// TODO -> Long id (PK, Gerada automaticamente).
-// TODO -> String codigoRastreio (Ex: "BR123456").
-// TODO -> String remetente (Quem mandou).
-// TODO -> String destinatario (Quem recebe).
-// TODO -> String localizacaoAtual (Ex: "CD São Paulo").
-// TODO -> String status (Ex: "POSTADO", "EM_TRANSITO", "ENTREGUE").
-// TODO -> LocalDateTime dataPostagem (Data que entrou no sistema).
-// TODO -> LocalDateTime dataPrevisaoEntrega (Data esperada).
 
 @Entity
 @Table(name = "TB_ENCOMENDA")
@@ -34,21 +26,30 @@ public class Encomenda {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-
     StatusEncomenda status;
+
     LocalDateTime dataPostagem;
     LocalDateTime dataEntrega;
     LocalDateTime dataPrevisaoEntrega;
+    Boolean atrasado = false;
 
     public long getTempoEmTransito() {
         if (dataPostagem == null) return 0;
-
         LocalDateTime dataFinal = LocalDateTime.now();
-
         if (this.dataEntrega != null) {
             dataFinal = this.dataEntrega.toLocalDate().atStartOfDay();
         }
-
         return ChronoUnit.DAYS.between(dataPostagem, dataFinal);
+    }
+
+    public Boolean isAtrasado() {
+        Encomenda encomenda = new Encomenda();
+        LocalDate diaAtual = LocalDate.now();
+        if (diaAtual.isAfter(ChronoLocalDate.from(encomenda.getDataPrevisaoEntrega()))) {
+            this.atrasado = true;
+            return true;
+        } else {
+            return false;
+        }
     }
 }
