@@ -23,6 +23,7 @@ public class Encomenda {
     String remetente;
     String destinatario;
     String localizacaoAtual;
+    Integer tempoTransito;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -43,10 +44,11 @@ public class Encomenda {
     }
 
     public Boolean isAtrasado() {
-        Encomenda encomenda = new Encomenda();
+        if (this.getDataPrevisaoEntrega() == null) {
+            return false;
+        }
         LocalDate diaAtual = LocalDate.now();
-        if (diaAtual.isAfter(ChronoLocalDate.from(encomenda.getDataPrevisaoEntrega()))) {
-            this.atrasado = true;
+        if (diaAtual.isAfter(ChronoLocalDate.from(this.getDataPrevisaoEntrega()))) {
             return true;
         } else {
             return false;

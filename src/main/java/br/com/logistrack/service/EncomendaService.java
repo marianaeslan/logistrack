@@ -69,10 +69,10 @@ public class EncomendaService {
                 .orElseThrow(() -> new RegraDeNegocioException("Encomenda não encontrada"));
         RastreioResponseDTO rastreioDTO = new RastreioResponseDTO();
         rastreioDTO.setCodigoRastreio(encomenda.getCodigoRastreio());
-        rastreioDTO.setStatusAtual(encomenda.getStatus().toString());
+        rastreioDTO.setStatusAtual(encomenda.getStatus().getDescricao());
         rastreioDTO.setLocalizacaoAtual(encomenda.getLocalizacaoAtual());
         rastreioDTO.setTempoEmTransito(encomenda.getTempoEmTransito());
-        rastreioDTO.setAtrasado(encomenda.getDataPrevisaoEntrega().isAfter(LocalDateTime.now()));
+
         return Optional.of(rastreioDTO);
     }
 

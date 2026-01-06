@@ -13,6 +13,6 @@ public class RastreioResponseDTO {
     private String statusAtual;
     private String localizacaoAtual;
     private long tempoEmTransito;
-    private boolean atrasado = false;
+
 }
 
