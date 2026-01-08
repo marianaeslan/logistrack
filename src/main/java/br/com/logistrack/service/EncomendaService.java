@@ -9,31 +9,37 @@ import br.com.logistrack.exceptions.RegraDeNegocioException;
 import br.com.logistrack.repository.EncomendaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
 public class EncomendaService {
     private final EncomendaRepository encomendaRepository;
+    private final EmailService emailService;
     private final ObjectMapper objectMapper;
 
     public EncomendaInputDTO create (EncomendaInputDTO encomendaInputDTO) throws RegraDeNegocioException {
         Encomenda novaEncomenda = new Encomenda();
+        LocalDateTime dataAgora = LocalDateTime.now();
+        LocalDate dataPrevisao = dataAgora.plusDays(encomendaInputDTO.getPrazoEntrega()).toLocalDate();
         novaEncomenda.setRemetente(encomendaInputDTO.getRemetente());
         novaEncomenda.setDestinatario(encomendaInputDTO.getDestinatario());
         novaEncomenda.setCodigoRastreio(UUID.randomUUID().toString());
-        novaEncomenda.setDataPostagem(LocalDateTime.now());
-        novaEncomenda.setDataPrevisaoEntrega(novaEncomenda.getDataPostagem().plusDays(5));
+        novaEncomenda.setDataPostagem(dataAgora);
+        novaEncomenda.setDataPrevisaoEntrega(dataPrevisao);
         novaEncomenda.setLocalizacaoAtual("Centro de Distribuição");
         novaEncomenda.setStatus(StatusEncomenda.EM_PROCESSAMENTO);
-        encomendaRepository.save(novaEncomenda);
-        return objectMapper.convertValue(novaEncomenda, EncomendaInputDTO.class);
+        novaEncomenda.setEmail(encomendaInputDTO.getEmail());
+        Encomenda encomendaSalva = encomendaRepository.save(novaEncomenda);
+
+
+        return objectMapper.convertValue(encomendaSalva, EncomendaInputDTO.class);
     }
 
     public StatusUpdateDTO update(long id, StatusUpdateDTO statusUpdateDTO) throws RegraDeNegocioException {
@@ -54,14 +60,14 @@ public class EncomendaService {
             encomenda.setStatus(StatusEncomenda.ATRASADO);
         }
         encomendaRepository.save(encomenda);
+        atualizarStatusEmail(id, encomenda.getStatus());
+
         return objectMapper.convertValue(encomenda, StatusUpdateDTO.class);
     }
 
 
     public List<Encomenda> list() {
-        return encomendaRepository.findAll().stream()
-                .map(encomenda -> objectMapper.convertValue(encomenda, Encomenda.class))
-                .toList();
+        return encomendaRepository.findAll();
     }
 
     public Optional<RastreioResponseDTO> findByRastreio(String codigoRastreio) {
@@ -73,11 +79,31 @@ public class EncomendaService {
         rastreioDTO.setLocalizacaoAtual(encomenda.getLocalizacaoAtual());
         rastreioDTO.setTempoEmTransito(encomenda.getTempoEmTransito());
 
+
         return Optional.of(rastreioDTO);
     }
 
     public void delete (long id) {
         encomendaRepository.deleteById(id);
+    }
+
+    public void atualizarStatusEmail(Long id, StatusEncomenda novoStatus) {
+        Encomenda encomenda = encomendaRepository.findById(id)
+                .orElseThrow(() -> new RegraDeNegocioException("Encomenda não encontrada"));
+        encomenda.setStatus(novoStatus);
+        encomendaRepository.save(encomenda);
+
+        Map<String, Object>dados = new HashMap<>();
+        dados.put("nomeCliente", encomenda.getDestinatario());
+        dados.put("nomeLoja", encomenda.getRemetente());
+        dados.put("codigoRastreio", encomenda.getCodigoRastreio());
+        dados.put("localizacaoAtual", encomenda.getLocalizacaoAtual());
+        dados.put("novoStatus", novoStatus.getDescricao());
+        dados.put("dataPrevisaoEntrega", encomenda.getDataPrevisaoEntrega().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        dados.put("linkRastreio", "http://localhost:8080/rastreio/" + encomenda.getCodigoRastreio());
+        dados.put("emailCliente", encomenda.getEmail());
+
+        emailService.sendEmail("Atualização de Encomenda", dados, objectMapper.convertValue(encomenda, EncomendaInputDTO.class));
     }
 
 }

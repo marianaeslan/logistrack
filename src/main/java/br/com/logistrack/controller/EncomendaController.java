@@ -5,6 +5,7 @@ import br.com.logistrack.dto.encomenda.EncomendaInputDTO;
 import br.com.logistrack.dto.encomenda.RastreioResponseDTO;
 import br.com.logistrack.dto.encomenda.StatusUpdateDTO;
 import br.com.logistrack.entity.Encomenda;
+import br.com.logistrack.service.EmailService;
 import br.com.logistrack.service.EncomendaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class EncomendaController implements EncomendaControllerDoc {
     public ResponseEntity<StatusUpdateDTO> statusUpdate (@PathVariable long id,
                                                          @Valid @RequestBody StatusUpdateDTO statusUpdateDTO) {
         StatusUpdateDTO encomenda = encomendaService.update(id, statusUpdateDTO);
+
         return new ResponseEntity<>(encomenda, HttpStatus.OK);
     }
 

@@ -1,5 +1,6 @@
 package br.com.logistrack.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -23,24 +24,33 @@ public class Encomenda {
     String remetente;
     String destinatario;
     String localizacaoAtual;
-    Integer tempoTransito;
+    Integer tempoTransito = 0;
+
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     StatusEncomenda status;
 
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     LocalDateTime dataPostagem;
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     LocalDateTime dataEntrega;
-    LocalDateTime dataPrevisaoEntrega;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    LocalDate dataPrevisaoEntrega;
     Boolean atrasado = false;
+
+    @Column(name = "email", unique = true)
+    String email;
 
     public long getTempoEmTransito() {
         if (dataPostagem == null) return 0;
-        LocalDateTime dataFinal = LocalDateTime.now();
+        LocalDateTime diaAtual = LocalDateTime.now();
         if (this.dataEntrega != null) {
-            dataFinal = this.dataEntrega.toLocalDate().atStartOfDay();
+            return ChronoUnit.DAYS.between(dataPostagem, diaAtual);
+        } else {
+            return 0;
         }
-        return ChronoUnit.DAYS.between(dataPostagem, dataFinal);
+
     }
 
     public Boolean isAtrasado() {
@@ -48,10 +58,8 @@ public class Encomenda {
             return false;
         }
         LocalDate diaAtual = LocalDate.now();
-        if (diaAtual.isAfter(ChronoLocalDate.from(this.getDataPrevisaoEntrega()))) {
-            return true;
-        } else {
-            return false;
-        }
+        return diaAtual.isAfter(ChronoLocalDate.from(this.getDataPrevisaoEntrega()));
     }
+
+
 }
