@@ -1,15 +1,16 @@
 package br.com.logistrack.service;
 
+import br.com.logistrack.client.ViaCepClient;
 import br.com.logistrack.dto.encomenda.EncomendaInputDTO;
 import br.com.logistrack.dto.encomenda.RastreioResponseDTO;
 import br.com.logistrack.dto.encomenda.StatusUpdateDTO;
+import br.com.logistrack.dto.endereco.EnderecoResponseDTO;
 import br.com.logistrack.entity.Encomenda;
-import br.com.logistrack.entity.StatusEncomenda;
+import br.com.logistrack.entity.enums.StatusEncomenda;
 import br.com.logistrack.exceptions.RegraDeNegocioException;
 import br.com.logistrack.repository.EncomendaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,23 +24,40 @@ public class EncomendaService {
     private final EncomendaRepository encomendaRepository;
     private final EmailService emailService;
     private final ObjectMapper objectMapper;
+    private final ViaCepClient viaCepClient;
 
     public EncomendaInputDTO create (EncomendaInputDTO encomendaInputDTO) throws RegraDeNegocioException {
         Encomenda novaEncomenda = new Encomenda();
-        LocalDateTime dataAgora = LocalDateTime.now();
-        LocalDate dataPrevisao = dataAgora.plusDays(encomendaInputDTO.getPrazoEntrega()).toLocalDate();
-        novaEncomenda.setRemetente(encomendaInputDTO.getRemetente());
-        novaEncomenda.setDestinatario(encomendaInputDTO.getDestinatario());
-        novaEncomenda.setCodigoRastreio(UUID.randomUUID().toString());
-        novaEncomenda.setDataPostagem(dataAgora);
-        novaEncomenda.setDataPrevisaoEntrega(dataPrevisao);
-        novaEncomenda.setLocalizacaoAtual("Centro de Distribuição");
-        novaEncomenda.setStatus(StatusEncomenda.EM_PROCESSAMENTO);
-        novaEncomenda.setEmail(encomendaInputDTO.getEmail());
-        Encomenda encomendaSalva = encomendaRepository.save(novaEncomenda);
+        String cep = encomendaInputDTO.getCep();
+        // definindo endereço de entrega
+        try {
+            EnderecoResponseDTO endereco = viaCepClient.getByCep(cep);
+            novaEncomenda.setLogradouro(endereco.getLogradouro());
+            if (endereco.getLogradouro() == null || endereco == null || endereco.getUf() == null) {
+                throw new RegraDeNegocioException("CEP inválido");
+            }
+            novaEncomenda.setComplemento(encomendaInputDTO.getComplemento());
+            novaEncomenda.setBairro(endereco.getBairro());
+            novaEncomenda.setCep(endereco.getCep());
+            novaEncomenda.setUf(endereco.getUf());
+            // definindo prazo de entrega
+            LocalDateTime dataAgora = LocalDateTime.now();
+            LocalDate dataPrevisao = dataAgora.plusDays(encomendaInputDTO.getPrazoEntrega()).toLocalDate();
+            novaEncomenda.setRemetente(encomendaInputDTO.getRemetente());
+            novaEncomenda.setDestinatario(encomendaInputDTO.getDestinatario());
+            novaEncomenda.setCodigoRastreio(UUID.randomUUID().toString());
+            novaEncomenda.setDataPostagem(dataAgora);
+            novaEncomenda.setDataPrevisaoEntrega(dataPrevisao);
+            novaEncomenda.setLocalizacaoAtual("Centro de Distribuição");
+            novaEncomenda.setStatus(StatusEncomenda.EM_PROCESSAMENTO);
+            novaEncomenda.setEmail(encomendaInputDTO.getEmail());
 
+            Encomenda encomendaSalva = encomendaRepository.save(novaEncomenda);
+            return objectMapper.convertValue(encomendaSalva, EncomendaInputDTO.class);
+        } catch (RegraDeNegocioException e){
+            throw new RegraDeNegocioException("CEP inválido");
+        }
 
-        return objectMapper.convertValue(encomendaSalva, EncomendaInputDTO.class);
     }
 
     public StatusUpdateDTO update(long id, StatusUpdateDTO statusUpdateDTO) throws RegraDeNegocioException {

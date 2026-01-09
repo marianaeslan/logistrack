@@ -1,5 +1,6 @@
 package br.com.logistrack.entity;
 
+import br.com.logistrack.entity.enums.StatusEncomenda;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -25,7 +26,11 @@ public class Encomenda {
     String destinatario;
     String localizacaoAtual;
     Integer tempoTransito = 0;
-
+    String cep;
+    String logradouro;
+    String complemento;
+    String bairro;
+    String uf;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

@@ -1,7 +1,7 @@
 package br.com.logistrack.repository;
 
 import br.com.logistrack.entity.Encomenda;
-import br.com.logistrack.entity.StatusEncomenda;
+import br.com.logistrack.entity.enums.StatusEncomenda;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

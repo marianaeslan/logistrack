@@ -1,6 +1,5 @@
-package br.com.logistrack.entity;
+package br.com.logistrack.entity.enums;
 
-import lombok.Data;
 import lombok.Getter;
 
 @Getter

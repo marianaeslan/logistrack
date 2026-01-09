@@ -2,10 +2,12 @@ package br.com.logistrack.dto.encomenda;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 // Cadastra nova encomenda
-@Data
+@Getter
+@Setter
 public class EncomendaInputDTO {
     @NotBlank(message = "O remetente é obrigatório")
     String remetente;
@@ -18,6 +20,12 @@ public class EncomendaInputDTO {
 
     @NotBlank(message = "O email é obrigatório")
     String email;
+
+    @NotBlank(message = "O cep é obrigatório")
+    String cep;
+
+    @NotBlank(message = "O complemento é obrigatório")
+    String complemento;
 
 
 }

@@ -1,12 +1,9 @@
 package br.com.logistrack.config;
 
-import feign.Contract;
-import feign.Feign;
+
 import feign.Logger;
-import feign.jackson.JacksonDecoder;
-import feign.jackson.JacksonEncoder;
-import feign.okhttp.OkHttpClient;
-import feign.slf4j.Slf4jLogger;
+import feign.codec.ErrorDecoder;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,19 +14,13 @@ import org.springframework.context.annotation.Scope;
 public class FeignConfig {
 
     @Bean
-    public Contract feignContract() {
-        return new Contract.Default();
+    public Logger.Level feignLoggerLevel() {
+        return Logger.Level.FULL;
     }
 
+
     @Bean
-    @Scope("prototype")
-    public Feign.Builder feignBuilder() {
-        return Feign.builder()
-                .client(new OkHttpClient())
-                .encoder(new JacksonEncoder())
-                .logger(new Slf4jLogger())
-                .logLevel(Logger.Level.FULL)
-                .errorDecoder(new SimpleErrorDecode())
-                .decoder(new JacksonDecoder());
+    public ErrorDecoder errorDecoder() {
+        return new SimpleErrorDecode();
     }
 }
