@@ -27,9 +27,9 @@ public class EnderecoService {
         try {
             EnderecoResponseDTO endereco = viaCepClient.getByCep(cep);
             novoEndereco.setCep(endereco.getCep());
+            novoEndereco.setLogradouro(endereco.getLogradouro());
             novoEndereco.setComplemento(enderecoInputDTO.getComplemento());
             novoEndereco.setBairro(endereco.getBairro());
-            novoEndereco.setCep(endereco.getCep());
             novoEndereco.setUf(endereco.getUf());
             Endereco enderecoSalvo = enderecoRepository.save(novoEndereco);
             return objectMapper.convertValue(enderecoSalvo, EnderecoInputDTO.class);
