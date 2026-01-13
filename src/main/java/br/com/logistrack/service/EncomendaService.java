@@ -28,18 +28,7 @@ public class EncomendaService {
 
     public EncomendaInputDTO create (EncomendaInputDTO encomendaInputDTO) throws RegraDeNegocioException {
         Encomenda novaEncomenda = new Encomenda();
-        String cep = encomendaInputDTO.getCep();
-        // definindo endereço de entrega
         try {
-            EnderecoResponseDTO endereco = viaCepClient.getByCep(cep);
-            novaEncomenda.setLogradouro(endereco.getLogradouro());
-            if (endereco.getLogradouro() == null || endereco == null || endereco.getUf() == null) {
-                throw new RegraDeNegocioException("CEP inválido");
-            }
-            novaEncomenda.setComplemento(encomendaInputDTO.getComplemento());
-            novaEncomenda.setBairro(endereco.getBairro());
-            novaEncomenda.setCep(endereco.getCep());
-            novaEncomenda.setUf(endereco.getUf());
             // definindo prazo de entrega
             LocalDateTime dataAgora = LocalDateTime.now();
             LocalDate dataPrevisao = dataAgora.plusDays(encomendaInputDTO.getPrazoEntrega()).toLocalDate();
@@ -55,7 +44,7 @@ public class EncomendaService {
             Encomenda encomendaSalva = encomendaRepository.save(novaEncomenda);
             return objectMapper.convertValue(encomendaSalva, EncomendaInputDTO.class);
         } catch (RegraDeNegocioException e){
-            throw new RegraDeNegocioException("CEP inválido");
+            throw new RegraDeNegocioException("Encomenda não cadastrada");
         }
 
     }
