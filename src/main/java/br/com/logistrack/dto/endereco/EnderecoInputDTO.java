@@ -15,9 +15,4 @@ public class EnderecoInputDTO {
     @NotBlank(message = "O complemento é obrigatório")
     String complemento;
 
-    @NotBlank(message = "O bairro é obrigatório")
-    String bairro;
-
-    @NotBlank(message = "O uf é obrigatório")
-    String uf;
 }

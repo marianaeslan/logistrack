@@ -4,8 +4,10 @@ import br.com.logistrack.client.ViaCepClient;
 import br.com.logistrack.dto.endereco.EnderecoInputDTO;
 import br.com.logistrack.dto.endereco.EnderecoResponseDTO;
 import br.com.logistrack.entity.Endereco;
+import br.com.logistrack.entity.Encomenda;
 import br.com.logistrack.exceptions.RegraDeNegocioException;
 import br.com.logistrack.repository.EnderecoRepository;
+import br.com.logistrack.repository.EncomendaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,19 +20,25 @@ import java.util.Optional;
 public class EnderecoService {
     
     private final EnderecoRepository enderecoRepository;
+    private final EncomendaRepository encomendaRepository;
     private final ViaCepClient viaCepClient;
     private final ObjectMapper objectMapper;
 
-    public EnderecoInputDTO create (EnderecoInputDTO enderecoInputDTO) {
+    public EnderecoInputDTO create (Long idEncomenda, EnderecoInputDTO enderecoInputDTO) {
+        Encomenda encomenda = encomendaRepository.findById(idEncomenda)
+                .orElseThrow(() -> new RegraDeNegocioException("Encomenda não encontrada"));
+        
         Endereco novoEndereco = new Endereco();
         String cep = enderecoInputDTO.getCep();
         try {
-            EnderecoResponseDTO endereco = viaCepClient.getByCep(cep);
-            novoEndereco.setCep(endereco.getCep());
-            novoEndereco.setLogradouro(endereco.getLogradouro());
+            EnderecoResponseDTO enderecoResponse = viaCepClient.getByCep(cep);
+            novoEndereco.setCep(enderecoResponse.getCep());
+            novoEndereco.setLogradouro(enderecoResponse.getLogradouro());
             novoEndereco.setComplemento(enderecoInputDTO.getComplemento());
-            novoEndereco.setBairro(endereco.getBairro());
-            novoEndereco.setUf(endereco.getUf());
+            novoEndereco.setBairro(enderecoResponse.getBairro());
+            novoEndereco.setUf(enderecoResponse.getUf());
+            novoEndereco.setEncomenda(encomenda);
+
             Endereco enderecoSalvo = enderecoRepository.save(novoEndereco);
             return objectMapper.convertValue(enderecoSalvo, EnderecoInputDTO.class);
         } catch (Exception e) {

@@ -17,15 +17,15 @@ import java.util.Optional;
 public class EnderecoController implements EnderecoControllerDoc {
     private final EnderecoService enderecoService;
 
-    @PostMapping
-    public ResponseEntity<EnderecoInputDTO> create (@RequestBody EnderecoInputDTO enderecoInputDTO) {
-        return ResponseEntity.ok(enderecoService.create(enderecoInputDTO));
+    @PostMapping("/{idEncomenda}")
+    public ResponseEntity<EnderecoInputDTO> create (@PathVariable Long idEncomenda, @RequestBody EnderecoInputDTO enderecoInputDTO) {
+        return ResponseEntity.ok(enderecoService.create(idEncomenda, enderecoInputDTO));
     
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Endereco> findEnderecoByEncomendaId (@PathVariable Long id) {
-        return ResponseEntity.ok((Endereco) enderecoService.findEnderecoByEncomendaId(id));
+    @GetMapping("/encomenda/{id}")
+    public ResponseEntity<List<Endereco>> findEnderecoByEncomendaId (@PathVariable Long id) {
+        return ResponseEntity.ok(enderecoService.findEnderecoByEncomendaId(id));
     }
 
     @DeleteMapping("/{id}")
@@ -45,8 +45,8 @@ public class EnderecoController implements EnderecoControllerDoc {
         return ResponseEntity.ok(enderecoService.list());
     }
 
-   @GetMapping
-    public ResponseEntity<Optional<Endereco>> getByCep (@RequestParam String cep) {
+   @GetMapping("/{cep}")
+    public ResponseEntity<Optional<Endereco>> getByCep (@PathVariable String cep) {
         return ResponseEntity.ok(enderecoService.getByCep(cep));
    }
 

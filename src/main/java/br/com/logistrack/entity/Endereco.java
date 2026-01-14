@@ -16,6 +16,7 @@ public class Endereco {
 
     @ManyToOne
     @JoinColumn(name = "id_encomenda")
+
     private Encomenda encomenda;
 
     String cep;

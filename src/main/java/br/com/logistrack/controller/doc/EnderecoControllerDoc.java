@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface EnderecoControllerDoc {
@@ -25,7 +26,8 @@ public interface EnderecoControllerDoc {
                     @ApiResponse(responseCode = "404", description = "Not Found"),
             }
     )
-    public ResponseEntity<EnderecoInputDTO> create (@Valid @RequestBody EnderecoInputDTO enderecoInputDTO);
+    public ResponseEntity<EnderecoInputDTO> create (@PathVariable Long idEncomenda,
+                                                    @RequestBody EnderecoInputDTO enderecoInputDTO);
 
     @Tag(name = "Consultas | Endereço", description = "Gerenciamento de endereços")
     @Operation(summary = "Atualizar endereço", description = "Atualiza um endereço")
@@ -48,7 +50,7 @@ public interface EnderecoControllerDoc {
                     @ApiResponse(responseCode = "404", description = "Not Found"),
             }
     )
-    public ResponseEntity<Endereco> findEnderecoByEncomendaId (@PathVariable Long id);
+    public ResponseEntity<List<Endereco>> findEnderecoByEncomendaId (@PathVariable Long id);
 
     @Tag(name = "Consultas | Endereço", description = "Gerenciamento de endereços")
     @Operation(summary = "Deletar endereço por id", description = "Deleta um endereço por id")

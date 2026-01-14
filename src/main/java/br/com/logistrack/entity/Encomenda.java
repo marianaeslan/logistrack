@@ -2,6 +2,7 @@ package br.com.logistrack.entity;
 
 import br.com.logistrack.entity.enums.StatusEncomenda;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import lombok.Getter;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 
 @Entity
@@ -42,8 +44,12 @@ public class Encomenda {
     LocalDate dataPrevisaoEntrega;
     Boolean atrasado = false;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email")
     String email;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "encomenda", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Endereco> enderecos;
 
     public long getTempoEmTransito() {
         if (dataPostagem == null) return 0;
