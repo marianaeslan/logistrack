@@ -18,6 +18,13 @@ O principal foco técnico deste projeto é a implementação de **Segurança de 
 * **Ferramentas:** Maven, Lombok
 
 ---
+## 🪪 Próximos passos
+
+- [x] Integração com ViaCep 
+- [ ] Implementação do Spring Security para validação e autenticação
+- [ ] Criação de testes unitários com JUnit e Mockito
+      
+---
 
 ## ⚙️ Pré-requisitos
 
