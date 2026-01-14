@@ -1,6 +1,6 @@
 package br.com.logistrack.config;
 
-import br.com.logistrack.exceptions.RegraDeNegocioException;
+import br.com.logistrack.exceptions.ResourceNotFoundException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import org.apache.commons.io.IOUtils;
@@ -20,7 +20,7 @@ public class SimpleErrorDecode implements ErrorDecoder {
             String bodyString = IOUtils.toString(body.asInputStream());
             switch (response.status()) {
                 case 400:
-                    return new RegraDeNegocioException(bodyString);
+                    return new ResourceNotFoundException(bodyString);
                 default:
                     return new Exception("Generic error");
             }

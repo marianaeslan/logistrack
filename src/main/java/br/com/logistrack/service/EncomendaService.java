@@ -4,10 +4,9 @@ import br.com.logistrack.client.ViaCepClient;
 import br.com.logistrack.dto.encomenda.EncomendaInputDTO;
 import br.com.logistrack.dto.encomenda.RastreioResponseDTO;
 import br.com.logistrack.dto.encomenda.StatusUpdateDTO;
-import br.com.logistrack.dto.endereco.EnderecoResponseDTO;
 import br.com.logistrack.entity.Encomenda;
 import br.com.logistrack.entity.enums.StatusEncomenda;
-import br.com.logistrack.exceptions.RegraDeNegocioException;
+import br.com.logistrack.exceptions.ResourceNotFoundException;
 import br.com.logistrack.repository.EncomendaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,7 @@ public class EncomendaService {
     private final ObjectMapper objectMapper;
     private final ViaCepClient viaCepClient;
 
-    public EncomendaInputDTO create (EncomendaInputDTO encomendaInputDTO) throws RegraDeNegocioException {
+    public EncomendaInputDTO create (EncomendaInputDTO encomendaInputDTO) throws ResourceNotFoundException {
         Encomenda novaEncomenda = new Encomenda();
         try {
             // definindo prazo de entrega
@@ -43,15 +42,15 @@ public class EncomendaService {
 
             Encomenda encomendaSalva = encomendaRepository.save(novaEncomenda);
             return objectMapper.convertValue(encomendaSalva, EncomendaInputDTO.class);
-        } catch (RegraDeNegocioException e){
-            throw new RegraDeNegocioException("Encomenda não cadastrada");
+        } catch (ResourceNotFoundException e){
+            throw new ResourceNotFoundException("Encomenda não cadastrada");
         }
 
     }
 
-    public StatusUpdateDTO update(long id, StatusUpdateDTO statusUpdateDTO) throws RegraDeNegocioException {
+    public StatusUpdateDTO update(long id, StatusUpdateDTO statusUpdateDTO) throws ResourceNotFoundException {
         Encomenda encomenda = encomendaRepository.findById(id)
-                .orElseThrow(() -> new RegraDeNegocioException("Encomenda não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Encomenda com ID " + id + " não encontrada"));
 
         if (statusUpdateDTO.getNovaLocalizacao() != null) {
             encomenda.setLocalizacaoAtual(statusUpdateDTO.getNovaLocalizacao());
@@ -79,7 +78,7 @@ public class EncomendaService {
 
     public Optional<RastreioResponseDTO> findByRastreio(String codigoRastreio) {
         Encomenda encomenda = encomendaRepository.findByCodigoRastreio(codigoRastreio)
-                .orElseThrow(() -> new RegraDeNegocioException("Encomenda não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Encomenda com código de rastreio " + codigoRastreio + " não encontrada"));
         RastreioResponseDTO rastreioDTO = new RastreioResponseDTO();
         rastreioDTO.setCodigoRastreio(encomenda.getCodigoRastreio());
         rastreioDTO.setStatusAtual(encomenda.getStatus().getDescricao());
@@ -96,7 +95,7 @@ public class EncomendaService {
 
     public void atualizarStatusEmail(Long id, StatusEncomenda novoStatus) {
         Encomenda encomenda = encomendaRepository.findById(id)
-                .orElseThrow(() -> new RegraDeNegocioException("Encomenda não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Encomenda com ID " + id + " não encontrada"));
         encomenda.setStatus(novoStatus);
         encomendaRepository.save(encomenda);
 

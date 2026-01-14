@@ -5,7 +5,7 @@ import br.com.logistrack.dto.endereco.EnderecoInputDTO;
 import br.com.logistrack.dto.endereco.EnderecoResponseDTO;
 import br.com.logistrack.entity.Endereco;
 import br.com.logistrack.entity.Encomenda;
-import br.com.logistrack.exceptions.RegraDeNegocioException;
+import br.com.logistrack.exceptions.ResourceNotFoundException;
 import br.com.logistrack.repository.EnderecoRepository;
 import br.com.logistrack.repository.EncomendaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +26,7 @@ public class EnderecoService {
 
     public EnderecoInputDTO create (Long idEncomenda, EnderecoInputDTO enderecoInputDTO) {
         Encomenda encomenda = encomendaRepository.findById(idEncomenda)
-                .orElseThrow(() -> new RegraDeNegocioException("Encomenda não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Encomenda não encontrada"));
         
         Endereco novoEndereco = new Endereco();
         String cep = enderecoInputDTO.getCep();
@@ -42,7 +42,7 @@ public class EnderecoService {
             Endereco enderecoSalvo = enderecoRepository.save(novoEndereco);
             return objectMapper.convertValue(enderecoSalvo, EnderecoInputDTO.class);
         } catch (Exception e) {
-            throw new RegraDeNegocioException("CEP inválido");
+            throw new ResourceNotFoundException("CEP inválido");
         }
     }
     
@@ -53,7 +53,7 @@ public class EnderecoService {
     public Optional<Endereco> getByCep(String cep) {
         List<Endereco> enderecos = enderecoRepository.findByCep(cep);
         if (enderecos.isEmpty()) {
-            throw new RegraDeNegocioException("Endereço não encontrado");
+            throw new ResourceNotFoundException("Endereço não encontrado");
         }
         return Optional.of(enderecos.get(0));
     }
@@ -68,7 +68,7 @@ public class EnderecoService {
     
     public EnderecoInputDTO update (long id, EnderecoInputDTO enderecoInputDTO) {
         Endereco endereco = enderecoRepository.findById(id)
-                .orElseThrow(() -> new RegraDeNegocioException("Endereço não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado"));
         String cep = enderecoInputDTO.getCep();
         try {
             EnderecoResponseDTO enderecoFromViaCep = viaCepClient.getByCep(cep);
@@ -83,7 +83,7 @@ public class EnderecoService {
 
             return objectMapper.convertValue(enderecoSalvo, EnderecoInputDTO.class);
         } catch (Exception e) {
-            throw new RegraDeNegocioException("CEP inválido");
+            throw new ResourceNotFoundException("CEP inválido");
         }
     }
 }
