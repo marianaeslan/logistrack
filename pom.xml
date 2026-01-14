@@ -18,10 +18,10 @@
 		<spring-cloud.version>2024.0.0</spring-cloud.version> </properties>
 
 	<dependencies>
-		<!-- Oracle -->
+		<!-- Postgres -->
 		<dependency>
-			<groupId>com.oracle.database.jdbc</groupId>
-			<artifactId>ojdbc11</artifactId>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 
@@ -81,8 +81,7 @@
 		</dependency>
 
 		<!-- Security -->
-
-	<!--	<dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
@@ -91,7 +90,7 @@
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
-		</dependency>  -->
+		</dependency>
 
 	</dependencies>
 

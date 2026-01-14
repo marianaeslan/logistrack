@@ -23,9 +23,9 @@ import java.util.Optional;
 public class EncomendaController implements EncomendaControllerDoc {
     private final EncomendaService encomendaService;
 
-    @PostMapping
-    public ResponseEntity<EncomendaInputDTO> create (@Valid @RequestBody EncomendaInputDTO encomendaInputDTO) {
-        return new ResponseEntity<>(encomendaService.create(encomendaInputDTO), HttpStatus.OK);
+    @PostMapping("/{idUsuario}")
+    public ResponseEntity<EncomendaInputDTO> create (@PathVariable Long idUsuario, @Valid @RequestBody EncomendaInputDTO encomendaInputDTO) {
+        return new ResponseEntity<>(encomendaService.create(idUsuario, encomendaInputDTO), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/status")

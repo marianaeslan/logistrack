@@ -18,7 +18,4 @@ public class EncomendaInputDTO {
     @NotNull(message = "O prazo de entrega é obrigatório")
     Integer prazoEntrega;
 
-    @NotBlank(message = "O email é obrigatório")
-    String email;
-
 }

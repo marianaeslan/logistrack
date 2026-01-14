@@ -22,6 +22,10 @@ target/
 out/
 *.DS_Store
 
+### Enviroment ###
+.env
+.env.local
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

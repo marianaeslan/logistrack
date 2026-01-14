@@ -4,10 +4,13 @@ import br.com.logistrack.client.ViaCepClient;
 import br.com.logistrack.dto.encomenda.EncomendaInputDTO;
 import br.com.logistrack.dto.encomenda.RastreioResponseDTO;
 import br.com.logistrack.dto.encomenda.StatusUpdateDTO;
+import br.com.logistrack.dto.usuario.UsuarioLoginDTO;
 import br.com.logistrack.entity.Encomenda;
+import br.com.logistrack.entity.Usuario;
 import br.com.logistrack.entity.enums.StatusEncomenda;
 import br.com.logistrack.exceptions.ResourceNotFoundException;
 import br.com.logistrack.repository.EncomendaRepository;
+import br.com.logistrack.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,8 +27,9 @@ public class EncomendaService {
     private final EmailService emailService;
     private final ObjectMapper objectMapper;
     private final ViaCepClient viaCepClient;
+    private final UsuarioRepository usuarioRepository;
 
-    public EncomendaInputDTO create (EncomendaInputDTO encomendaInputDTO) throws ResourceNotFoundException {
+    public EncomendaInputDTO create (Long idUsuario, EncomendaInputDTO encomendaInputDTO) throws ResourceNotFoundException {
         Encomenda novaEncomenda = new Encomenda();
         try {
             // definindo prazo de entrega
@@ -38,7 +42,10 @@ public class EncomendaService {
             novaEncomenda.setDataPrevisaoEntrega(dataPrevisao);
             novaEncomenda.setLocalizacaoAtual("Centro de Distribuição");
             novaEncomenda.setStatus(StatusEncomenda.EM_PROCESSAMENTO);
-            novaEncomenda.setEmail(encomendaInputDTO.getEmail());
+            
+            Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+            novaEncomenda.setUsuario(usuario);
 
             Encomenda encomendaSalva = encomendaRepository.save(novaEncomenda);
             return objectMapper.convertValue(encomendaSalva, EncomendaInputDTO.class);
@@ -94,10 +101,16 @@ public class EncomendaService {
     }
 
     public void atualizarStatusEmail(Long id, StatusEncomenda novoStatus) {
+        
         Encomenda encomenda = encomendaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Encomenda com ID " + id + " não encontrada"));
         encomenda.setStatus(novoStatus);
         encomendaRepository.save(encomenda);
+
+        Usuario usuario = encomenda.getUsuario();
+        if (usuario == null) {
+            throw new ResourceNotFoundException("Usuário não associado a esta encomenda");
+        }
 
         Map<String, Object>dados = new HashMap<>();
         dados.put("nomeCliente", encomenda.getDestinatario());
@@ -107,9 +120,8 @@ public class EncomendaService {
         dados.put("novoStatus", novoStatus.getDescricao());
         dados.put("dataPrevisaoEntrega", encomenda.getDataPrevisaoEntrega().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         dados.put("linkRastreio", "http://localhost:8080/rastreio/" + encomenda.getCodigoRastreio());
-        dados.put("emailCliente", encomenda.getEmail());
 
-        emailService.sendEmail("Atualização de Encomenda", dados, objectMapper.convertValue(encomenda, EncomendaInputDTO.class));
+        emailService.sendEmail("Atualização de encomenda", dados, objectMapper.convertValue(usuario, UsuarioLoginDTO.class));
     }
 
 }

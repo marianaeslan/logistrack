@@ -24,7 +24,8 @@ public interface EncomendaControllerDoc {
                     @ApiResponse(responseCode = "404", description = "Not Found"),
             }
     )
-    public ResponseEntity<EncomendaInputDTO> create (@Valid @RequestBody EncomendaInputDTO encomendaInputDTO);
+    public ResponseEntity<EncomendaInputDTO> create (@PathVariable Long idUsuario,
+                                                     @Valid @RequestBody EncomendaInputDTO encomendaInputDTO);
 
     @Tag(name = "Consultas | Encomendas", description = "Gerenciamento de encomendas")
     @Operation(summary = "Atualizar status da encomenda", description = "Atualiza o status de uma encomenda")

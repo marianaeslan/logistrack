@@ -44,8 +44,9 @@ public class Encomenda {
     LocalDate dataPrevisaoEntrega;
     Boolean atrasado = false;
 
-    @Column(name = "email")
-    String email;
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 
     @JsonIgnore
     @OneToMany(mappedBy = "encomenda", cascade = CascadeType.ALL, orphanRemoval = true)
