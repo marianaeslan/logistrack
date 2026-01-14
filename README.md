@@ -19,10 +19,11 @@ O principal foco técnico deste projeto é a implementação de **Segurança de 
 
 ---
 ## 🪪 Próximos passos
-
-- [x] Integração com ViaCep 
-- [ ] Implementação do Spring Security para validação e autenticação
-- [ ] Criação de testes unitários com JUnit e Mockito
+- [x] **CRUD de Encomendas:** Criação e gerenciamento de pacotes.
+- [x] **Gestão de Endereços:** Entidade separada para organização logística.
+- [x] **Integração com ViaCEP:** Preenchimento automático de dados de endereço via API externa.
+- [ ] **Segurança (Em breve):** Autenticação e autorização com níveis de acesso (User/Admin).
+- [ ] **Testes Unitários(Em breve):** Criação de testes unitários com JUnit e Mockito.
       
 ---
 
