@@ -31,6 +31,10 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.STRING)
     private TipoCargo cargo;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_endereco", referencedColumnName = "id")
+    private Endereco endereco;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
