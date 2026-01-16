@@ -7,7 +7,14 @@ O principal foco técnico deste projeto é a implementação de **Segurança de 
 ---
 
 ## 🚀 Tecnologias e Stacks
-
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
+![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white)
+![Maven](https://img.shields.io/badge/apachemaven-C71A36.svg?style=for-the-badge&logo=apachemaven&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)</br></br>
 * **Linguagem:** Java 17+
 * **Framework:** Spring Boot 3.x
     * Spring Web (REST)
@@ -16,6 +23,7 @@ O principal foco técnico deste projeto é a implementação de **Segurança de 
 * **Banco de Dados:** PostgreSQL (via Docker)
 * **Documentação:** SpringDoc OpenAPI (Swagger UI)
 * **Ferramentas:** Maven, Lombok, Docker Compose
+
 
 ---
 
