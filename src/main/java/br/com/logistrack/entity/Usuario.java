@@ -27,7 +27,7 @@ public class Usuario implements UserDetails {
 
     String senha;
 
-    @Column(name="Cargo", nullable = false)
+    @Column(name="cargo", nullable = false)
     @Enumerated(EnumType.STRING)
     private TipoCargo cargo;
 

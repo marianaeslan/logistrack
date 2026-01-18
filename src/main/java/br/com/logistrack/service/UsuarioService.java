@@ -17,19 +17,18 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-// TODO: implementar Usuario Service
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final EnderecoRepository enderecoRepository;
     private final ObjectMapper objectMapper;
     private final ViaCepClient viaCepClient;
-    //private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     
     public UsuarioLoginDTO create (UsuarioCreateDTO usuarioCreateDTO) {
         
         Usuario novoUsuario = new Usuario();
         novoUsuario.setEmail(usuarioCreateDTO.getEmail());
-        novoUsuario.setSenha(usuarioCreateDTO.getSenha());
+        novoUsuario.setSenha(passwordEncoder.encode(usuarioCreateDTO.getSenha()));
         novoUsuario.setCargo(TipoCargo.USER);
         
         try {
