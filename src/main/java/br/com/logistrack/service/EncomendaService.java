@@ -128,6 +128,7 @@ public class EncomendaService {
         dados.put("codigoRastreio", encomenda.getCodigoRastreio());
         dados.put("localizacaoAtual", encomenda.getLocalizacaoAtual());
         dados.put("novoStatus", novoStatus.getDescricao());
+        dados.put("emailCliente", usuario.getEmail());
         dados.put("dataPrevisaoEntrega", encomenda.getDataPrevisaoEntrega().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         dados.put("linkRastreio", "http://localhost:8080/rastreio/" + encomenda.getCodigoRastreio());
 

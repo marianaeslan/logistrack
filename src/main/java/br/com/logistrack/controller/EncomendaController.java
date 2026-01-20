@@ -19,7 +19,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/encomendas")
+@RequestMapping("/api/encomenda")
 public class EncomendaController implements EncomendaControllerDoc {
     private final EncomendaService encomendaService;
 

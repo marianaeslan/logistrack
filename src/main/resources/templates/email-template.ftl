@@ -51,7 +51,7 @@
     </div>
     <div class="footer">
         <p>&copy; 2026 Logistrack. Todos os direitos reservados.</p>
-        <p>Enviado para: ${emailCliente}</p>
+        <p>Enviado para: ${emailCliente!"Email não informado"}</p>
     </div>
 </div>
 </body>

@@ -34,7 +34,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/encomenda").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/encomenda").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/encomenda/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/encomenda/{id}/status").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/encomenda/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/rastreio/{codigoRastreio}").permitAll()
                         .anyRequest().authenticated()
