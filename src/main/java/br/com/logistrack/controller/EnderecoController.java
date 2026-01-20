@@ -17,12 +17,12 @@ import java.util.Optional;
 public class EnderecoController implements EnderecoControllerDoc {
     private final EnderecoService enderecoService;
 
-    @PostMapping("/{idEncomenda}")
-    public ResponseEntity<EnderecoInputDTO> create (@PathVariable Long idEncomenda, @RequestBody EnderecoInputDTO enderecoInputDTO) {
-        return ResponseEntity.ok(enderecoService.create(idEncomenda, enderecoInputDTO));
+    @PostMapping("/{idUsuario}")
+    public ResponseEntity<EnderecoInputDTO> create (@PathVariable Long idUsuario,
+                                                    @RequestBody EnderecoInputDTO enderecoInputDTO) {
+        return ResponseEntity.ok(enderecoService.create(idUsuario, enderecoInputDTO));
     
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete (@PathVariable long id) {

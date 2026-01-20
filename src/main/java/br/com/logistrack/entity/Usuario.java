@@ -30,7 +30,6 @@ public class Usuario implements UserDetails {
     String email;
 
     String senha;
-    String cep;
 
     @Column(name="cargo", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -44,7 +43,7 @@ public class Usuario implements UserDetails {
         this.email = email;
         this.senha = encryptedPassword;
         this.cargo = cargo;
-        this.cep = cep;
+
     }
 
 

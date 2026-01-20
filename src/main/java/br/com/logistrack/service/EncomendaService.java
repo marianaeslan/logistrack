@@ -7,10 +7,12 @@ import br.com.logistrack.dto.encomenda.StatusUpdateDTO;
 import br.com.logistrack.dto.usuario.AuthenticationDTO;
 
 import br.com.logistrack.entity.Encomenda;
+import br.com.logistrack.entity.Endereco;
 import br.com.logistrack.entity.Usuario;
 import br.com.logistrack.entity.enums.StatusEncomenda;
 import br.com.logistrack.exceptions.ResourceNotFoundException;
 import br.com.logistrack.repository.EncomendaRepository;
+import br.com.logistrack.repository.EnderecoRepository;
 import br.com.logistrack.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class EncomendaService {
     private final ObjectMapper objectMapper;
     private final ViaCepClient viaCepClient;
     private final UsuarioRepository usuarioRepository;
+    private final EnderecoRepository enderecoRepository;
 
     public EncomendaInputDTO create (Long idUsuario, EncomendaInputDTO encomendaInputDTO) throws ResourceNotFoundException {
         Encomenda novaEncomenda = new Encomenda();
@@ -48,6 +51,11 @@ public class EncomendaService {
             Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
             novaEncomenda.setUsuario(usuario);
+
+            Optional<Endereco> endereco = Optional.ofNullable(enderecoRepository.findById(usuario.getEndereco().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado")));
+            novaEncomenda.setEnderecoDestino(endereco.get());
+
 
             Encomenda encomendaSalva = encomendaRepository.save(novaEncomenda);
             return objectMapper.convertValue(encomendaSalva, EncomendaInputDTO.class);

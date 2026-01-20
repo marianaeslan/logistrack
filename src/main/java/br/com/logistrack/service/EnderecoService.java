@@ -5,9 +5,11 @@ import br.com.logistrack.dto.endereco.EnderecoInputDTO;
 import br.com.logistrack.dto.endereco.EnderecoResponseDTO;
 import br.com.logistrack.entity.Endereco;
 import br.com.logistrack.entity.Encomenda;
+import br.com.logistrack.entity.Usuario;
 import br.com.logistrack.exceptions.ResourceNotFoundException;
 import br.com.logistrack.repository.EnderecoRepository;
 import br.com.logistrack.repository.EncomendaRepository;
+import br.com.logistrack.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,10 +25,11 @@ public class EnderecoService {
     private final EncomendaRepository encomendaRepository;
     private final ViaCepClient viaCepClient;
     private final ObjectMapper objectMapper;
+    private final UsuarioRepository usuarioRepository;
 
-    public EnderecoInputDTO create (Long idEncomenda, EnderecoInputDTO enderecoInputDTO) {
-        Encomenda encomenda = encomendaRepository.findById(idEncomenda)
-                .orElseThrow(() -> new ResourceNotFoundException("Encomenda não encontrada"));
+    public EnderecoInputDTO create (Long idUsuario, EnderecoInputDTO enderecoInputDTO) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
         
         Endereco novoEndereco = new Endereco();
         String cep = enderecoInputDTO.getCep();
@@ -38,8 +41,11 @@ public class EnderecoService {
             novoEndereco.setBairro(enderecoResponse.getBairro());
             novoEndereco.setUf(enderecoResponse.getUf());
 
-
             Endereco enderecoSalvo = enderecoRepository.save(novoEndereco);
+
+            usuario.setEndereco(enderecoSalvo);
+            usuarioRepository.save(usuario);
+
             return objectMapper.convertValue(enderecoSalvo, EnderecoInputDTO.class);
         } catch (Exception e) {
             throw new ResourceNotFoundException("CEP inválido");

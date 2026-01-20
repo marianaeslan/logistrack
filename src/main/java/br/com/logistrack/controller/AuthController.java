@@ -6,12 +6,12 @@ import br.com.logistrack.dto.usuario.RegisterDTO;
 import br.com.logistrack.entity.Usuario;
 import br.com.logistrack.infra.security.TokenService;
 import br.com.logistrack.service.UsuarioService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
