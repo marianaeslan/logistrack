@@ -41,16 +41,6 @@ public interface EnderecoControllerDoc {
     public ResponseEntity<EnderecoInputDTO> update (@PathVariable long id,
                                                          @Valid @RequestBody EnderecoInputDTO enderecoInputDTO);
 
-    @Tag(name = "Consultas | Endereço", description = "Gerenciamento de endereços")
-    @Operation(summary = "Buscar endereço por código da encomenda", description = "Busca endereço por código da encomenda")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "OK"),
-                    @ApiResponse(responseCode = "400", description = "Bad Request"),
-                    @ApiResponse(responseCode = "404", description = "Not Found"),
-            }
-    )
-    public ResponseEntity<List<Endereco>> findEnderecoByEncomendaId (@PathVariable Long id);
 
     @Tag(name = "Consultas | Endereço", description = "Gerenciamento de endereços")
     @Operation(summary = "Deletar endereço por id", description = "Deleta um endereço por id")

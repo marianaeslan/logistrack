@@ -37,7 +37,7 @@ public class EnderecoService {
             novoEndereco.setComplemento(enderecoInputDTO.getComplemento());
             novoEndereco.setBairro(enderecoResponse.getBairro());
             novoEndereco.setUf(enderecoResponse.getUf());
-            novoEndereco.setEncomenda(encomenda);
+
 
             Endereco enderecoSalvo = enderecoRepository.save(novoEndereco);
             return objectMapper.convertValue(enderecoSalvo, EnderecoInputDTO.class);
@@ -61,25 +61,25 @@ public class EnderecoService {
     public void delete (long id) {
         enderecoRepository.deleteById(id);
     }
-    
-    public List<Endereco> findEnderecoByEncomendaId (Long id) {
-        return enderecoRepository.findEnderecoByEncomendaId(id);
-    }
-    
+
     public EnderecoInputDTO update (long id, EnderecoInputDTO enderecoInputDTO) {
-        Endereco endereco = enderecoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado"));
+        Encomenda encomenda = encomendaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Encomenda não encontrada"));
+        Endereco novoEndereco = new Endereco();
         String cep = enderecoInputDTO.getCep();
         try {
             EnderecoResponseDTO enderecoFromViaCep = viaCepClient.getByCep(cep);
 
-            endereco.setCep(enderecoFromViaCep.getCep());
-            endereco.setLogradouro(enderecoFromViaCep.getLogradouro());
-            endereco.setBairro(enderecoFromViaCep.getBairro());
-            endereco.setUf(enderecoFromViaCep.getUf());
-            endereco.setComplemento(enderecoInputDTO.getComplemento());
+            novoEndereco.setCep(enderecoFromViaCep.getCep());
+            novoEndereco.setLogradouro(enderecoFromViaCep.getLogradouro());
+            novoEndereco.setBairro(enderecoFromViaCep.getBairro());
+            novoEndereco.setUf(enderecoFromViaCep.getUf());
+            novoEndereco.setComplemento(enderecoInputDTO.getComplemento());
 
-            Endereco enderecoSalvo = enderecoRepository.save(endereco);
+            Endereco enderecoSalvo = enderecoRepository.save(novoEndereco);
+
+            encomenda.setEnderecoDestino(enderecoSalvo);
+            encomendaRepository.save(encomenda);
 
             return objectMapper.convertValue(enderecoSalvo, EnderecoInputDTO.class);
         } catch (Exception e) {

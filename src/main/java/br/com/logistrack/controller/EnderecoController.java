@@ -23,10 +23,6 @@ public class EnderecoController implements EnderecoControllerDoc {
     
     }
 
-    @GetMapping("/encomenda/{id}")
-    public ResponseEntity<List<Endereco>> findEnderecoByEncomendaId (@PathVariable Long id) {
-        return ResponseEntity.ok(enderecoService.findEnderecoByEncomendaId(id));
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete (@PathVariable long id) {

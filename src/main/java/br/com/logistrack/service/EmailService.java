@@ -1,7 +1,8 @@
 package br.com.logistrack.service;
 
-import br.com.logistrack.dto.encomenda.EncomendaInputDTO;
-import br.com.logistrack.dto.usuario.UsuarioLoginDTO;
+
+import br.com.logistrack.dto.usuario.AuthenticationDTO;
+
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -28,14 +29,14 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String from;
 
-    public void sendEmail(String subject, Map<String, Object> dados, UsuarioLoginDTO usuarioLoginDTO) {
+    public void sendEmail(String subject, Map<String, Object> dados, AuthenticationDTO authenticationDTO) {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
 
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
             mimeMessageHelper.setFrom(from);
-            mimeMessageHelper.setTo(usuarioLoginDTO.getEmail());
+            mimeMessageHelper.setTo(authenticationDTO.email());
             mimeMessageHelper.setSubject(subject);
 
 
@@ -50,7 +51,7 @@ public class EmailService {
         } catch (MessagingException | IOException | TemplateException e) {
             e.printStackTrace();
 
-            throw new RuntimeException("Erro ao enviar email para: " + usuarioLoginDTO.getEmail());
+            throw new RuntimeException("Erro ao enviar email para: " + authenticationDTO.email());
         }
     }
 

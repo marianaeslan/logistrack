@@ -14,11 +14,6 @@ public class Endereco {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_encomenda")
-
-    private Encomenda encomenda;
-
     String cep;
     String logradouro;
     String complemento;

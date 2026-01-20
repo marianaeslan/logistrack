@@ -3,7 +3,9 @@ package br.com.logistrack.entity;
 import br.com.logistrack.entity.enums.TipoCargo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,6 +18,8 @@ import java.util.List;
 @Setter
 @Table(name = "TB_USUARIO")
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Usuario implements UserDetails {
 
     @Id
@@ -26,6 +30,7 @@ public class Usuario implements UserDetails {
     String email;
 
     String senha;
+    String cep;
 
     @Column(name="cargo", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -35,10 +40,17 @@ public class Usuario implements UserDetails {
     @JoinColumn(name = "id_endereco", referencedColumnName = "id")
     private Endereco endereco;
 
+    public Usuario(String email, String encryptedPassword, TipoCargo cargo, String cep) {
+        this.email = email;
+        this.senha = encryptedPassword;
+        this.cargo = cargo;
+        this.cep = cep;
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.cargo.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.cargo.name()));
     }
 
     @Override public boolean isAccountNonExpired() {
@@ -46,11 +58,27 @@ public class Usuario implements UserDetails {
     }
 
     @Override public String getPassword() {
-        return "";
+        return this.senha;
     }
 
     @Override public String getUsername() {
-        return "";
+        return this.email;
+    }
+
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     @JsonIgnore

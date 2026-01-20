@@ -24,7 +24,7 @@ public class Encomenda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     String codigoRastreio;
 
     String remetente;
@@ -48,19 +48,18 @@ public class Encomenda {
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "encomenda", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Endereco> enderecos;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_endereco_destino")
+    private Endereco enderecoDestino;
 
     public long getTempoEmTransito() {
         if (dataPostagem == null) return 0;
-        LocalDateTime diaAtual = LocalDateTime.now();
+
         if (this.dataEntrega != null) {
-            return ChronoUnit.DAYS.between(dataPostagem, diaAtual);
-        } else {
-            return 0;
+            return ChronoUnit.DAYS.between(dataPostagem, dataEntrega);
         }
 
+        return ChronoUnit.DAYS.between(dataPostagem, LocalDateTime.now());
     }
 
     public Boolean isAtrasado() {

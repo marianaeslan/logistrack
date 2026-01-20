@@ -4,7 +4,8 @@ import br.com.logistrack.client.ViaCepClient;
 import br.com.logistrack.dto.encomenda.EncomendaInputDTO;
 import br.com.logistrack.dto.encomenda.RastreioResponseDTO;
 import br.com.logistrack.dto.encomenda.StatusUpdateDTO;
-import br.com.logistrack.dto.usuario.UsuarioLoginDTO;
+import br.com.logistrack.dto.usuario.AuthenticationDTO;
+
 import br.com.logistrack.entity.Encomenda;
 import br.com.logistrack.entity.Usuario;
 import br.com.logistrack.entity.enums.StatusEncomenda;
@@ -38,6 +39,7 @@ public class EncomendaService {
             novaEncomenda.setRemetente(encomendaInputDTO.getRemetente());
             novaEncomenda.setDestinatario(encomendaInputDTO.getDestinatario());
             novaEncomenda.setCodigoRastreio(UUID.randomUUID().toString());
+
             novaEncomenda.setDataPostagem(dataAgora);
             novaEncomenda.setDataPrevisaoEntrega(dataPrevisao);
             novaEncomenda.setLocalizacaoAtual("Centro de Distribuição");
@@ -121,7 +123,7 @@ public class EncomendaService {
         dados.put("dataPrevisaoEntrega", encomenda.getDataPrevisaoEntrega().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         dados.put("linkRastreio", "http://localhost:8080/rastreio/" + encomenda.getCodigoRastreio());
 
-        emailService.sendEmail("Atualização de encomenda", dados, objectMapper.convertValue(usuario, UsuarioLoginDTO.class));
+        emailService.sendEmail("Atualização de encomenda", dados, objectMapper.convertValue(usuario, AuthenticationDTO.class));
     }
 
 }
