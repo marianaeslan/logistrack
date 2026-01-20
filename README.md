@@ -33,7 +33,7 @@ O principal foco técnico deste projeto é a implementação de **Segurança de 
 - [x] **Gestão de Endereços:** Entidade separada para organização logística.
 - [x] **Integração com ViaCEP:** Preenchimento automático de dados de endereço via API externa.
 - [x] **Ambiente Containerizado:** Configuração completa de banco de dados com Docker.
-- [ ] **Segurança (Em breve):** Autenticação e autorização com níveis de acesso (User/Admin).
+- [x] **Segurança:** Autenticação e autorização com níveis de acesso (User/Admin).
 - [ ] **Testes Unitários (Em breve):** Criação de testes unitários com JUnit e Mockito.
 
 ---
