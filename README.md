@@ -1,6 +1,6 @@
 # 📦 LogisTrack API
 
-**LogiTrack** é uma API RESTful desenvolvida para gestão e rastreamento de encomendas logísticas. O sistema permite o despacho de pacotes, atualização de status em tempo real e consulta pública de rastreio.
+**LogisTrack** é uma API RESTful desenvolvida para gestão e rastreamento de encomendas logísticas. O sistema permite o despacho de pacotes, atualização de status em tempo real e consulta pública de rastreio.
 
 O principal foco técnico deste projeto é a implementação de **Segurança de Dados e Transformação** utilizando o padrão **DTO (Data Transfer Object)**, garantindo que dados sensíveis do banco de dados não sejam expostos diretamente aos consumidores da API.
 
