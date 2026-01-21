@@ -30,12 +30,24 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        //encomenda
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/encomenda").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/encomenda").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/encomenda/{id}/status").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/encomenda/{id}").hasRole("ADMIN")
+                        // usuario
+                        .requestMatchers(HttpMethod.POST, "/api/usuario/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/usuario/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/usuario/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/usuario/**").hasRole("ADMIN")
+                        // endereco
+                        .requestMatchers(HttpMethod.POST, "/api/endereco/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/endereco/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/endereco/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/endereco/**").hasRole("ADMIN")
+                        // rastreio
                         .requestMatchers(HttpMethod.GET, "/api/rastreio/{codigoRastreio}").permitAll()
                         .anyRequest().authenticated()
                 )

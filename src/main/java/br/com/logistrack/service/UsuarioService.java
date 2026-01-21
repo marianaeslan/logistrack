@@ -16,6 +16,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -38,5 +41,33 @@ public class UsuarioService {
 
     public UserDetails findByEmail (String email) {
         return usuarioRepository.findByEmail(email);
+    }
+
+    public UserDetails findById (Long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    }
+
+    public List<RegisterDTO> list() {
+        return usuarioRepository.findAll()
+                .stream()
+                .map(usuario -> objectMapper.convertValue(usuario, RegisterDTO.class))
+                .toList();
+    }
+
+    public Usuario update (long id, RegisterDTO registerDTO) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        usuario.setEmail(registerDTO.email());
+        usuario.setSenha(passwordEncoder.encode(registerDTO.senha()));
+        usuario.setCargo(registerDTO.cargo() != null ? registerDTO.cargo() : TipoCargo.USER);
+        usuarioRepository.save(usuario);
+        return usuario;
+    }
+
+    public void delete (long id) {
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        enderecoRepository.deleteEnderecoById(usuario.get().getEndereco().getId());
+        usuarioRepository.deleteById(id);
     }
 }

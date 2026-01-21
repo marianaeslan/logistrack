@@ -21,7 +21,6 @@ public class EnderecoController implements EnderecoControllerDoc {
     public ResponseEntity<EnderecoInputDTO> create (@PathVariable Long idUsuario,
                                                     @RequestBody EnderecoInputDTO enderecoInputDTO) {
         return ResponseEntity.ok(enderecoService.create(idUsuario, enderecoInputDTO));
-    
     }
 
     @DeleteMapping("/{id}")
