@@ -29,7 +29,6 @@ public class EncomendaService {
     private final EncomendaRepository encomendaRepository;
     private final EmailService emailService;
     private final ObjectMapper objectMapper;
-    private final ViaCepClient viaCepClient;
     private final UsuarioRepository usuarioRepository;
     private final EnderecoRepository enderecoRepository;
 
@@ -55,7 +54,6 @@ public class EncomendaService {
             Optional<Endereco> endereco = Optional.ofNullable(enderecoRepository.findById(usuario.getEndereco().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado")));
             novaEncomenda.setEnderecoDestino(endereco.get());
-
 
             Encomenda encomendaSalva = encomendaRepository.save(novaEncomenda);
             return objectMapper.convertValue(encomendaSalva, EncomendaInputDTO.class);
@@ -107,6 +105,10 @@ public class EncomendaService {
     }
 
     public void delete (long id) {
+        encomendaRepository.findById(id);
+        if (encomendaRepository.findById(id).isEmpty()) {
+            throw new ResourceNotFoundException("Encomenda com ID " + id + " não encontrada");
+        }
         encomendaRepository.deleteById(id);
     }
 

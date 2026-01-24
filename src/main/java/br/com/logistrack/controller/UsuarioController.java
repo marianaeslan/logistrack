@@ -19,7 +19,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDetails> findById (Long id) {
+    public ResponseEntity<UserDetails> findById (@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.findById(id));
     }
 
@@ -37,7 +37,6 @@ public class UsuarioController {
     public ResponseEntity<UserDetails> update (@PathVariable long id, RegisterDTO registerDTO) {
         Usuario usuarioAtualizado = usuarioService.update(id, registerDTO);
         return new ResponseEntity<>(usuarioAtualizado, HttpStatus.OK);
-
     }
 
     @DeleteMapping("/{id}")

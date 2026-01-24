@@ -26,13 +26,15 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final EnderecoRepository enderecoRepository;
     private final ObjectMapper objectMapper;
-    private final ViaCepClient viaCepClient;
     private final PasswordEncoder passwordEncoder;
     
     public Usuario create (RegisterDTO registerDTO) {
         
         Usuario novoUsuario = new Usuario();
         novoUsuario.setEmail(registerDTO.email());
+        if (usuarioRepository.findByEmail(registerDTO.email()) != null) {
+            throw new RuntimeException("Email já cadastrado");
+        }
         novoUsuario.setSenha(passwordEncoder.encode(registerDTO.senha()));
         novoUsuario.setCargo(registerDTO.cargo() != null ? registerDTO.cargo() : TipoCargo.USER);
         usuarioRepository.save(novoUsuario);
