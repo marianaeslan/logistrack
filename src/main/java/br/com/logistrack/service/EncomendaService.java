@@ -1,6 +1,5 @@
 package br.com.logistrack.service;
 
-import br.com.logistrack.client.ViaCepClient;
 import br.com.logistrack.dto.encomenda.EncomendaInputDTO;
 import br.com.logistrack.dto.encomenda.RastreioResponseDTO;
 import br.com.logistrack.dto.encomenda.StatusUpdateDTO;
@@ -34,33 +33,28 @@ public class EncomendaService {
 
     public EncomendaInputDTO create (Long idUsuario, EncomendaInputDTO encomendaInputDTO) throws ResourceNotFoundException {
         Encomenda novaEncomenda = new Encomenda();
-        try {
-            // definindo prazo de entrega
-            LocalDateTime dataAgora = LocalDateTime.now();
-            LocalDate dataPrevisao = dataAgora.plusDays(encomendaInputDTO.getPrazoEntrega()).toLocalDate();
-            novaEncomenda.setRemetente(encomendaInputDTO.getRemetente());
-            novaEncomenda.setDestinatario(encomendaInputDTO.getDestinatario());
-            novaEncomenda.setCodigoRastreio(UUID.randomUUID().toString());
+        
+        LocalDateTime dataAgora = LocalDateTime.now();
+        LocalDate dataPrevisao = dataAgora.plusDays(encomendaInputDTO.getPrazoEntrega()).toLocalDate();
+        novaEncomenda.setRemetente(encomendaInputDTO.getRemetente());
+        novaEncomenda.setDestinatario(encomendaInputDTO.getDestinatario());
+        novaEncomenda.setCodigoRastreio(UUID.randomUUID().toString());
 
-            novaEncomenda.setDataPostagem(dataAgora);
-            novaEncomenda.setDataPrevisaoEntrega(dataPrevisao);
-            novaEncomenda.setLocalizacaoAtual("Centro de Distribuição");
-            novaEncomenda.setStatus(StatusEncomenda.EM_PROCESSAMENTO);
-            
-            Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
-            novaEncomenda.setUsuario(usuario);
+        novaEncomenda.setDataPostagem(dataAgora);
+        novaEncomenda.setDataPrevisaoEntrega(dataPrevisao);
+        novaEncomenda.setLocalizacaoAtual("Centro de Distribuição");
+        novaEncomenda.setStatus(StatusEncomenda.EM_PROCESSAMENTO);
+        
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+        novaEncomenda.setUsuario(usuario);
 
-            Optional<Endereco> endereco = Optional.ofNullable(enderecoRepository.findById(usuario.getEndereco().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado")));
-            novaEncomenda.setEnderecoDestino(endereco.get());
+        Endereco endereco = enderecoRepository.findById(usuario.getEndereco().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado"));
+        novaEncomenda.setEnderecoDestino(endereco);
 
-            Encomenda encomendaSalva = encomendaRepository.save(novaEncomenda);
-            return objectMapper.convertValue(encomendaSalva, EncomendaInputDTO.class);
-        } catch (ResourceNotFoundException e){
-            throw new ResourceNotFoundException("Encomenda não cadastrada");
-        }
-
+        Encomenda encomendaSalva = encomendaRepository.save(novaEncomenda);
+        return objectMapper.convertValue(encomendaSalva, EncomendaInputDTO.class);
     }
 
     public StatusUpdateDTO update(long id, StatusUpdateDTO statusUpdateDTO) throws ResourceNotFoundException {

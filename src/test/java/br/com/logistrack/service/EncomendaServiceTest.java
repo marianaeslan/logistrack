@@ -1,24 +1,28 @@
 package br.com.logistrack.service;
 
 import br.com.logistrack.dto.encomenda.EncomendaInputDTO;
-import br.com.logistrack.dto.encomenda.RastreioResponseDTO;
+
 import br.com.logistrack.dto.encomenda.StatusUpdateDTO;
 import br.com.logistrack.dto.usuario.AuthenticationDTO;
 import br.com.logistrack.entity.Encomenda;
+import br.com.logistrack.entity.Endereco;
 import br.com.logistrack.entity.Usuario;
 import br.com.logistrack.entity.enums.StatusEncomenda;
 import br.com.logistrack.entity.enums.TipoCargo;
 import br.com.logistrack.exceptions.ResourceNotFoundException;
 import br.com.logistrack.repository.EncomendaRepository;
 import br.com.logistrack.repository.EnderecoRepository;
+import br.com.logistrack.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
+
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -40,7 +44,12 @@ class EncomendaServiceTest {
     private EncomendaRepository encomendaRepository;
 
     @Mock
-    private  EnderecoRepository enderecoRepository;
+    private EnderecoRepository enderecoRepository;
+
+    @Mock
+    private UsuarioRepository usuarioRepository;
+
+
 
     @Mock
     private EmailService emailService;
@@ -52,13 +61,31 @@ class EncomendaServiceTest {
     @DisplayName("Deve criar uma nova encomenda")
     @Test
     void deveCriarUmaNovaEncomenda() {
-        EncomendaInputDTO dto = new EncomendaInputDTO("Remetente", "Destinatário", 3);
-        EncomendaInputDTO encomendaCriada = encomendaService.create(1L, dto);
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setEmail("teste@mail.com");
+        usuario.setSenha("hash");
+        usuario.setCargo(TipoCargo.USER);
 
-        assertNotNull(encomendaCriada);
-        assertEquals("Remetente", encomendaCriada.getRemetente());
-        assertEquals("Destinatário", encomendaCriada.getDestinatario());
-        assertEquals(3, encomendaCriada.getPrazoEntrega());
+        Endereco endereco = new Endereco();
+        endereco.setId(1L);
+        endereco.setCep("12345678");
+        usuario.setEndereco(endereco);
+
+        EncomendaInputDTO dto = new EncomendaInputDTO("Remetente", "Destinatário", 3);
+        Encomenda encomendaSalva = new Encomenda();
+
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(enderecoRepository.findById(1L)).thenReturn(Optional.of(endereco));
+        when(encomendaRepository.save(any(Encomenda.class))).thenReturn(encomendaSalva);
+        when(objectMapper.convertValue(encomendaSalva, EncomendaInputDTO.class)).thenReturn(dto);
+
+        EncomendaInputDTO novaEncomenda = encomendaService.create(1L, dto);
+
+        assertNotNull(novaEncomenda);
+        assertEquals("Remetente", novaEncomenda.getRemetente());
+        assertEquals("Destinatário", novaEncomenda.getDestinatario());
+        assertEquals(3, novaEncomenda.getPrazoEntrega());
 
         verify(encomendaRepository).save(any(Encomenda.class));
     }
@@ -85,14 +112,14 @@ class EncomendaServiceTest {
 
         StatusUpdateDTO dto = new StatusUpdateDTO("Nova localização", StatusEncomenda.ENTREGUE);
 
-        AuthenticationDTO authDto = new AuthenticationDTO(usuario.getEmail(), "senha_hash"); // Ajuste conforme seu construtor
+        AuthenticationDTO authDto = new AuthenticationDTO(usuario.getEmail(), "senha_hash");
 
         when(encomendaRepository.findById(1L)).thenReturn(Optional.of(encomenda));
         when(encomendaRepository.save(any(Encomenda.class))).thenReturn(encomenda);
 
         when(objectMapper.convertValue(any(Encomenda.class), eq(StatusUpdateDTO.class)))
                 .thenReturn(dto);
-
+        
         when(objectMapper.convertValue(any(Usuario.class), eq(AuthenticationDTO.class)))
                 .thenReturn(authDto);
 
@@ -123,6 +150,18 @@ class EncomendaServiceTest {
     @DisplayName("Deve deletar uma encomenda")
     @Test
     void deveDeletarEncomenda() {
+        Encomenda encomenda = new Encomenda();
+        encomenda.setId(1L);
+        encomenda.setRemetente("Remetente");
+        encomenda.setDestinatario("Destinatário");
+        encomenda.setCodigoRastreio("123456789");
+        encomenda.setDataPostagem(LocalDateTime.now());
+        encomenda.setDataPrevisaoEntrega(LocalDate.now().plusDays(3));
+        encomenda.setLocalizacaoAtual("Localização");
+        encomenda.setStatus(StatusEncomenda.EM_PROCESSAMENTO);
+
+        when(encomendaRepository.findById(1L)).thenReturn(Optional.of(encomenda));
+
         encomendaService.delete(1L);
         verify(encomendaRepository).deleteById(1L);
     }
